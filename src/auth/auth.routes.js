@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
       httpOnly: true,
       secure: true, // NOTE: For development over HTTP. Use 'secure: true' in production with HTTPS.
       sameSite: 'strict', // or 'None' if you need cross-site requests
-      path: '/test',
+      path: '/',
     });
     return res.status(200).send({ Msg: 'Logged in successfully.' });
   } catch (error) {
