@@ -38,8 +38,8 @@ router.post('/login', async (req, res) => {
     console.log('Token to be set:', token);
     res.cookie('auth_token', token, {
       httpOnly: true,
-      secure: false, // NOTE: For development over HTTP. Use 'secure: true' in production with HTTPS.
-      sameSite: 'None', // or 'None' if you need cross-site requests
+      secure: true, // NOTE: For development over HTTP. Use 'secure: true' in production with HTTPS.
+      sameSite: 'strict', // or 'None' if you need cross-site requests
       path: '/test',
     });
     return res.status(200).send({ Msg: 'Logged in successfully.' });
