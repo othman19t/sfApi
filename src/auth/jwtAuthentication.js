@@ -5,15 +5,20 @@ dotenv.config();
 const secret = process.env.JWT_SECRET;
 
 const jwtAuthentication = (req, res, next) => {
-  console.log('jwt authentication hit');
-  // Extract the token from cookies
-  const token = req.cookies.auth_token; // Assuming you've set the token under the cookie name 'token'
-  console.log('req.cookies: ', req.cookies);
-  console.log('token: ', token);
-  if (!token) return res.sendStatus(401); // No token found
+  console.log('JWT authentication hit');
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.sendStatus(401); // No token found in the Authorization header
+  }
+
+  const token = authHeader.split(' ')[1]; // Extract the token part from the header
+  console.log('Token from header: ', token);
 
   jwt.verify(token, secret, (err, user) => {
-    if (err) return res.sendStatus(403); // Invalid token
+    if (err) {
+      return res.sendStatus(403); // Invalid token
+    }
     req.user = user;
     next(); // Token is valid, proceed to the next middleware/route handler
   });

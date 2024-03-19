@@ -34,15 +34,11 @@ router.post('/login', async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).send({ message: 'Login failed' });
     }
+
     const token = jwt.sign({ id: user._id }, secret);
-    console.log('Token to be set:', token);
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      secure: true, // NOTE: For development over HTTP. Use 'secure: true' in production with HTTPS.
-      sameSite: 'Lax', // or 'None' if you need cross-site requests
-      path: '/',
-    });
-    return res.status(200).send({ Msg: 'Logged in successfully.' });
+    console.log('Token generated:', token);
+
+    return res.status(200).json({ token }); // Return the token in the response
   } catch (error) {
     res.status(500).send(error);
   }
