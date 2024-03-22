@@ -1,12 +1,19 @@
+import User from '../models/user.model.js';
 export const getUserByToken = async (req, res) => {
-  const user = req.user;
-  console.log('User: ' + user);
-  res.status(200).send({
-    message: 'successfully got user info',
-    success: true,
-    user: {
-      loggedIn: true,
-      id: user.id,
-    },
-  });
+  try {
+    const userId = req.user.id;
+    const user = await User.findOne({ _id: userId });
+    console.log('User: ' + user);
+    res.status(200).send({
+      message: 'successfully got user info',
+      success: true,
+      user: {
+        loggedIn: true,
+        id: user.id,
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.email,
+        credit: user?.credit,
+      },
+    });
+  } catch (error) {}
 };
