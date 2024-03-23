@@ -18,12 +18,31 @@ router.get('/test', jwtAuthentication, async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     console.log('req.body', req.body);
-    const { email, password } = req.body;
-    const user = new User({ email, password });
+
+    const { email, password, firstName, lastName, postalCode, timezone } =
+      req.body;
+    //TODO: check email does not exist before inserting datas
+    const emailExists = await User.findOne({ email: email });
+
+    if (emailExists) {
+      return res
+        .status(400)
+        .send({ success: false, message: 'Email Address already registered' });
+    }
+    const user = new User({
+      email,
+      password,
+      firstName,
+      lastName,
+      postalCode,
+      timezone,
+    });
     await user.save();
-    res.status(201).send({ message: 'User created successfully' });
+    return res
+      .status(201)
+      .send({ success: true, message: 'User created successfully' });
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send({ success: false, error });
   }
 });
 

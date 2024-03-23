@@ -18,10 +18,7 @@ const userSchema = new mongoose.Schema({
   timezone: {
     type: String,
   },
-  subscribed: {
-    type: Boolean,
-    default: false,
-  },
+  phone: { type: String },
   credit: {
     type: Number,
     default: 0,
