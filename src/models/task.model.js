@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 const taskSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       required: true,
@@ -24,10 +28,10 @@ const taskSchema = new mongoose.Schema(
       type: String, //TODO: should update this field after i figure out how to handle this in cron job and user input
     },
     tags: {
-      type: Array,
+      type: [String],
     },
     blockedKeyWords: {
-      type: Array,
+      type: [String],
     },
     radius: {
       type: String,
