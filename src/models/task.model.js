@@ -39,6 +39,14 @@ const taskSchema = new mongoose.Schema(
     postalCode: {
       type: String,
     },
+    minPrice: {
+      type: Number,
+      required: true,
+    },
+    maxPrice: {
+      type: Number,
+      required: true,
+    },
     updatedAt: {
       type: Date,
       default: Date.now,
