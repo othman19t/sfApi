@@ -32,11 +32,11 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     startTime: {
-      type: string,
+      type: String,
       required: true,
     },
     endTime: {
-      type: string,
+      type: String,
       required: true,
     },
     tags: {
