@@ -20,12 +20,24 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     url: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post', // 'Post' should match the name you gave to your post model
+      type: String,
       required: true,
     },
-    schedule: {
-      type: String, //TODO: should update this field after i figure out how to handle this in cron job and user input
+    interval: {
+      type: String,
+      required: true,
+    },
+    cronSchedule: {
+      type: String,
+      required: true,
+    },
+    startTime: {
+      type: string,
+      required: true,
+    },
+    endTime: {
+      type: string,
+      required: true,
     },
     tags: {
       type: [String],

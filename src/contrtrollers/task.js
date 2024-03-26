@@ -25,26 +25,16 @@ export const createTask = async (req, res) => {
     const userId = req?.user?.id;
 
     const newTasks = new Task({
-      name: 'Example Name',
-      status: 'Active',
-      platform: 'Facebook',
-      userId, // Make sure this is an actual ObjectId from your User collection
-      url: 'AnotherObjectId', // Make sure this is an actual ObjectId from your Post collection
-      schedule: 'To be determined',
-      tags: ['tag1', 'tag2'],
-      blockedKeyWords: ['keyword1', 'keyword2'],
-      radius: '10km',
-      postalCode: '12345',
-      // name: req?.body?.name,
-      // status: req?.body?.status,
-      // platform: req?.body?.platform,
-      // userId,
-      // url: req?.body?.url,
-      // schedule: req?.body?.schedule,
-      // tags: req?.body?.tags,
-      // blockedKeyWords: req?.body?.blockedKeyWords,
-      // radius: req?.body?.radius,
-      // postalCode: req?.body?.postalCode,
+      name: req?.body?.name,
+      status: req?.body?.status,
+      platform: req?.body?.platform,
+      userId,
+      url: req?.body?.url,
+      schedule: req?.body?.schedule,
+      tags: req?.body?.tags,
+      blockedKeyWords: req?.body?.blockedKeyWords,
+      radius: req?.body?.radius,
+      postalCode: req?.body?.postalCode,
     });
 
     await newTasks.save();
