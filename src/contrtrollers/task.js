@@ -20,23 +20,28 @@ export const getTasks = async (req, res) => {
   }
 };
 export const createTask = async (req, res) => {
-  //TODO: update the code accordingly once other ports are ready
   try {
     const userId = req?.user?.id;
 
+    console.log('creating task', req.body);
     const newTasks = new Task({
       name: req?.body?.name,
-      status: req?.body?.status,
       platform: req?.body?.platform,
-      userId,
-      url: req?.body?.url,
-      schedule: req?.body?.schedule,
       tags: req?.body?.tags,
       blockedKeyWords: req?.body?.blockedKeyWords,
-      radius: req?.body?.radius,
+      minPrice: req?.body?.minPrice,
+      maxPrice: req?.body?.maxPrice,
       postalCode: req?.body?.postalCode,
+      radius: req?.body?.radius,
+      timezone: req?.body?.timezone,
+      interval: req?.body?.interval,
+      startTime: req?.body?.startTime,
+      endTime: req?.body?.endTime,
+      status: req?.body?.status,
+      cronSchedule: req?.body?.cronSchedule,
+      url: req?.body?.url,
+      userId,
     });
-
     await newTasks.save();
     return res.status(201).send({
       message: 'successfully created a new task',
