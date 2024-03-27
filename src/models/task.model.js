@@ -59,6 +59,9 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
     updatedAt: {
       type: Date,
       default: Date.now,

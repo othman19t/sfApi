@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Server as HttpServer } from 'http';
 import { Server as IOServer } from 'socket.io';
@@ -40,7 +39,6 @@ const io = new IOServer(httpServer, {
   },
 });
 app.use(cors(corsOptions));
-app.use(cookieParser()); // Somewhere in your server setup before you use your routes
 app.use(bodyParser.json({ limit: '6mb' }));
 app.use('/api', routers);
 

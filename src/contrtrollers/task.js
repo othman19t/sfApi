@@ -41,6 +41,9 @@ export const createTask = async (req, res) => {
       cronSchedule: req?.body?.cronSchedule,
       url: req?.body?.url,
       userId,
+      city,
+      state,
+      country,
     });
     await newTasks.save();
     return res.status(201).send({
