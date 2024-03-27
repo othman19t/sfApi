@@ -4,7 +4,8 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-
+import { Server as HttpServer } from 'http';
+import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
 
 dotenv.config();
@@ -32,15 +33,36 @@ const corsOptions = {
 //   res.send('Hello, world!');
 // });
 const app = express();
+const httpServer = new HttpServer(app);
+const io = new IOServer(httpServer, {
+  cors: {
+    origin: corsOptions,
+  },
+});
 app.use(cors(corsOptions));
 app.use(cookieParser()); // Somewhere in your server setup before you use your routes
 app.use(bodyParser.json({ limit: '6mb' }));
 app.use('/api', routers);
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+
+  // Example event
+  socket.on('example_event', (clientData, callback) => {
+    console.log(`Received example_event with data: ${clientData}`);
+    callback({ Msg: 'clientData is received on socket eventBuzz' });
+  });
+});
+
 mongoose
   .connect(dbUrl)
   .then(() => {
     console.log('Connected to database');
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
