@@ -3,6 +3,7 @@ export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {
     const userId = req.user.id;
+    console.log('userId: ' + userId);
     const tasks = await Task.find({ userId });
 
     console.log('tasks: ' + tasks);
@@ -39,11 +40,8 @@ export const createTask = async (req, res) => {
       endTime: req?.body?.endTime,
       status: req?.body?.status,
       cronSchedule: req?.body?.cronSchedule,
-      url: req?.body?.url,
+      location: req?.body?.location,
       userId,
-      city,
-      state,
-      country,
     });
     await newTasks.save();
     return res.status(201).send({
