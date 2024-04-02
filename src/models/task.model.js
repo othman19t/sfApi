@@ -6,6 +6,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    email: { type: String },
     status: {
       type: String,
       required: true,
@@ -56,7 +57,7 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-
+    timezone: { type: String },
     location: { type: mongoose.Schema.Types.ObjectId, ref: 'Location' }, // 'User' should match the name you gave to your user model },
     updatedAt: {
       type: Date,

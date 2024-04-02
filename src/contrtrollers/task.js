@@ -27,6 +27,7 @@ export const createTask = async (req, res) => {
     console.log('creating task', req.body);
     const newTasks = new Task({
       name: req?.body?.name,
+      email: req?.body?.email,
       platform: req?.body?.platform,
       tags: req?.body?.tags,
       blockedKeyWords: req?.body?.blockedKeyWords,
