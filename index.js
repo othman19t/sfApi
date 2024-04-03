@@ -6,6 +6,7 @@ import cors from 'cors';
 import { Server as HttpServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
+import { runFacebookJobs } from './src/cronJobs.js';
 
 dotenv.config();
 const sfcClient = process.env.SF_CLIENT;
@@ -55,6 +56,8 @@ io.on('connection', (socket) => {
     callback({ Msg: 'clientData is received on socket eventBuzz' });
   });
 });
+
+runFacebookJobs();
 
 mongoose
   .connect(dbUrl)
