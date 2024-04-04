@@ -57,4 +57,27 @@ export const createTask = async (req, res) => {
     });
   }
 };
-export const updateTask = async (req, res) => {};
+export const updateTask = async (req, res) => {
+  const taskId = req?.body.taskId;
+  const dataToUpdate = req?.body?.dataToUpdate;
+  console.log('req?.body', req?.body);
+
+  try {
+    const updatedTask = await Task.updateOne(
+      { _id: taskId }, // Filter condition to match the document
+      { $set: dataToUpdate } // The update operation
+    );
+
+    return res.status(201).send({
+      message: 'successfully updated task',
+      success: true,
+      updatedTask,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: 'server error occurred',
+      success: false,
+    });
+  }
+};
