@@ -1,4 +1,10 @@
 import Task from '../models/task.model.js';
+import {
+  stopFacebookJob,
+  stopCraigslistsJob,
+  stopOfferUpJob,
+  stopKarrotUpJob,
+} from '../cronJobs.js';
 export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {
@@ -66,6 +72,19 @@ export const updateTask = async (req, res) => {
   console.log('req?.body', req?.body);
 
   try {
+    const task = await Task.findById(taskId);
+    if (task.platform == 'Facebook') {
+      stopFacebookJob(task);
+    }
+    if (task.platform == 'Craigslist') {
+      stopCraigslistsJob(task);
+    }
+    if (task.platform == 'OfferUp') {
+      stopOfferUpJob(task);
+    }
+    if (task.platform == 'Karrot') {
+      stopKarrotUpJob(task);
+    }
     const updatedTask = await Task.updateOne(
       { _id: taskId }, // Filter condition to match the document
       { $set: dataToUpdate } // The update operation
