@@ -4,7 +4,10 @@ export const getTasks = async (req, res) => {
   try {
     const userId = req.user.id;
     console.log('userId: ' + userId);
-    const tasks = await Task.find({ userId });
+    const tasks = await Task.find({
+      userId,
+      status: { $nin: ['Deleted', 'Archived'] },
+    });
 
     console.log('tasks: ' + tasks);
     return res.status(200).send({
