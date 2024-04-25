@@ -8,6 +8,23 @@ import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
 import { runFacebookJobs } from './src/cronJobs.js';
 
+// import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
+
+//TODO: to get proxies example
+// const getIp = async () => {
+//   const mainIps = await getFacebookProxies();
+//   console.log('Ip: ', mainIps);
+// };
+
+// TODO: backup proxy => this might be better of you keep it in scrapper server
+// const backupIp = {
+//   host: process.env.BACK_UP_IP,
+//   port: process.env.BACK_UP_PORT,
+//   username: process.env.BACK_UP_USERNAME,
+//   password: process.env.BACK_UP_PASSWORD,
+// };
+
+// getIp();
 dotenv.config();
 const sfcClient = process.env.SF_CLIENT;
 const PORT = process.env.PORT || 3002;
