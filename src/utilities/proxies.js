@@ -12,12 +12,17 @@ const handleDeleteAllBlockedIp = async (proxiesName) => {
 };
 // this add blocked ip to redis
 const handleAddBlockedIp = async (ip, proxiesName) => {
-  const client = await createClient()
-    .on('error', (err) => console.log('Redis Client Error', err))
-    .connect();
+  try {
+    const client = await createClient()
+      .on('error', (err) => console.log('Redis Client Error', err))
+      .connect();
 
-  await client.lPush(proxiesName, ip.ip);
-  await client.disconnect();
+    await client.lPush(proxiesName, ip?.ip);
+    await client.disconnect();
+    console.log('Added blocked ip to redis: ', ip?.ip, proxiesName);
+  } catch (error) {
+    console.log('Failed to add blocked', error);
+  }
 };
 // this gets the list of blocked ips of the given proxies set name
 const handleGetListBlockedIps = async (proxiesName) => {
@@ -95,8 +100,8 @@ const getFacebookproxies = async () => {
 //TODO: the following commented code are just examples for depugging purposes
 // proxies();
 // await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
-// handleDeleteAllBlockedIp('proxies1');
-// const data = await handleGetListBlockedIps('proxies1');
+// handleDeleteAllBlockedIp('testProxiname');
+// const data = await handleGetListBlockedIps('testProxiname');
 // console.log('data', data);
 
 export const addBlockedIp = handleAddBlockedIp; // call this funtion when you want to add a blocked IP and dont forget to add all ip object and proxies set name which is in the ip object proxiesName property.
