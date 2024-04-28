@@ -84,7 +84,7 @@ const handleGetFacebookProxies = async (token, user, pass, proxiesName) => {
 };
 
 // this function would be called when scrapping data in the feature we will need to add one more account to have more ips and concatate all ips togther before returning the ips to use them for scrapping
-const getFacebookproxies = async () => {
+export const getFacebookProxies = async () => {
   const PROXY_TOKEN1 = process.env.PROXY_TOKEN1;
   const PROXY_USER1 = process.env.PROXY_USER1; // Username for proxy auth
   const PROXY_PASS1 = process.env.PROXY_PASS1; // Password for proxy auth
@@ -100,9 +100,9 @@ const getFacebookproxies = async () => {
 //TODO: the following commented code are just examples for depugging purposes
 // proxies();
 // await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
-// handleDeleteAllBlockedIp('testProxiname');
-// const data = await handleGetListBlockedIps('testProxiname');
-// console.log('data', data);
+handleDeleteAllBlockedIp('facebookProxies1');
+const data = await handleGetListBlockedIps('facebookProxies1');
+console.log('data', data);
 
 export const addBlockedIp = handleAddBlockedIp; // call this funtion when you want to add a blocked IP and dont forget to add all ip object and proxies set name which is in the ip object proxiesName property.
-export const getFacebookProxies = getFacebookproxies; //call this when want to get proxies to use for scrapping
+// export const getFacebookProxies = getFacebookproxies; //call this when want to get proxies to use for scrapping

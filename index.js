@@ -8,13 +8,13 @@ import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
 import { runFacebookJobs } from './src/cronJobs.js';
 
-// import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
+import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
 
 //TODO: to get proxies example
-// const getIp = async () => {
-//   const mainIps = await getFacebookProxies();
-//   console.log('Ip: ', mainIps);
-// };
+const getIp = async () => {
+  const mainIps = await getFacebookProxies();
+  console.log('Ip: ', JSON.stringify(mainIps));
+};
 
 // TODO: backup proxy => this might be better of you keep it in scrapper server
 // const backupIp = {
@@ -24,7 +24,7 @@ import { runFacebookJobs } from './src/cronJobs.js';
 //   password: process.env.BACK_UP_PASSWORD,
 // };
 
-// getIp();
+getIp();
 dotenv.config();
 const sfcClient = process.env.SF_CLIENT;
 const PORT = process.env.PORT || 3002;
