@@ -26,10 +26,11 @@ const getIp = async () => {
 
 getIp();
 dotenv.config();
-const sfcClient = process.env.SF_CLIENT;
-const PORT = process.env.PORT || 3002;
+const sfClient = process.env.SF_CLIENT;
+const sfScrapper = process.env.SF_SCRAPPER;
+const PORT = process.env.PORT || 3001;
 const dbUrl = process.env.DB_URL;
-const allowList = [`${sfcClient}`];
+const allowList = [`${sfClient}`, `${sfScrapper}`];
 const corsOptions = {
   origin: function (origin, callback) {
     console.log('Attempting CORS for origin:', origin); // Helps in debugging
