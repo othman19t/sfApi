@@ -40,6 +40,10 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // Replace 'User' with whatever your user model is named
     },
+    taskId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Taskr', // Replace 'User' with whatever your user model is named
+    },
     postId: {
       type: String,
       required: true,
@@ -48,6 +52,9 @@ const postSchema = new mongoose.Schema(
     location: {
       type: String,
       required: true,
+    },
+    scrollTime: {
+      type: Number,
     },
   },
   {

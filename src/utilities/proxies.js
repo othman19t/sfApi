@@ -100,7 +100,7 @@ export const getFacebookProxies = async () => {
 //TODO: the following commented code are just examples for depugging purposes
 // proxies();
 // await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
-handleDeleteAllBlockedIp('facebookProxies1');
+// handleDeleteAllBlockedIp('facebookProxies1');
 const data = await handleGetListBlockedIps('facebookProxies1');
 console.log('data', data);
 
