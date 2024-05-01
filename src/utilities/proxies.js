@@ -17,13 +17,21 @@ const handleAddBlockedIp = async (ip, proxiesName) => {
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
 
-    await client.lPush(proxiesName, ip?.ip);
+    // Check if the IP already exists in the list
+    const existingIps = await client.lRange(proxiesName, 0, -1);
+    if (existingIps.includes(ip?.ip)) {
+      console.log('IP already exists in the list:', ip?.ip);
+    } else {
+      await client.lPush(proxiesName, ip?.ip);
+      console.log('Added blocked ip to redis: ', ip?.ip, proxiesName);
+    }
+
     await client.disconnect();
-    console.log('Added blocked ip to redis: ', ip?.ip, proxiesName);
   } catch (error) {
     console.log('Failed to add blocked', error);
   }
 };
+
 // this gets the list of blocked ips of the given proxies set name
 const handleGetListBlockedIps = async (proxiesName) => {
   const client = await createClient()
@@ -99,8 +107,10 @@ export const getFacebookProxies = async () => {
 };
 //TODO: the following commented code are just examples for depugging purposes
 // proxies();
-// await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
+await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
 // handleDeleteAllBlockedIp('facebookProxies1');
+// const data = await handleGetListBlockedIps('proxies1');
+
 const data = await handleGetListBlockedIps('facebookProxies1');
 console.log('data', data);
 
