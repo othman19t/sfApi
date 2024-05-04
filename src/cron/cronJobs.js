@@ -72,13 +72,12 @@ export const runFacebookJobs = () => {
               console.log(`Executing job: ${task.name}`);
               // Your job execution logic to genrate url and scrollTime to append to task
               let url = '';
-              let scrollTime = 5000;
-
-              parseInt(task?.interval) <= 3
-                ? 10000
-                : parseInt(task?.interval) <= 10
-                ? 20000
-                : 30000;
+              let scrollTime =
+                parseInt(task?.interval) <= 3
+                  ? 10000
+                  : parseInt(task?.interval) <= 10
+                  ? 20000
+                  : 30000;
               const tags = task?.tags.join(' '); // Join the array elements into a single string, separated by spaces
               var encodedQueryString = encodeURIComponent(tags); // Encode the query string to ensure it is a valid URL component
               if (task?.platform == 'Facebook') {
