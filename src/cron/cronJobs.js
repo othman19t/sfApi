@@ -59,7 +59,9 @@ export const runFacebookJobs = () => {
     console.log('running checkAndScheduleJobs');
     try {
       // Fetch all jobs from your database
-      const tasks = await Task.find({ platform: 'Facebook' });
+      const tasks = await Task.find({ platform: 'Facebook' }).populate(
+        'location'
+      );
 
       tasks.forEach((task) => {
         // If the job is 'Active' and not already scheduled
@@ -72,17 +74,27 @@ export const runFacebookJobs = () => {
               let url = '';
               let scrollTime = 5000;
 
-              // parseInt(task?.interval) <= 3
-              //   ? 10000
-              //   : parseInt(task?.interval) <= 10
-              //   ? 20000
-              //   : 30000;
+              parseInt(task?.interval) <= 3
+                ? 10000
+                : parseInt(task?.interval) <= 10
+                ? 20000
+                : 30000;
               const tags = task?.tags.join(' '); // Join the array elements into a single string, separated by spaces
               var encodedQueryString = encodeURIComponent(tags); // Encode the query string to ensure it is a valid URL component
               if (task?.platform == 'Facebook') {
-                url = `https://www.facebook.com/marketplace/${task?.location}/search?minPrice=${task?.minPrice}&maxPrice=${task?.maxPrice}&daysSinceListed=1&query=${encodedQueryString}&exact=false`;
+                url = `https://www.facebook.com/marketplace/${task?.location?.locationId}/search?minPrice=${task?.minPrice}&maxPrice=${task?.maxPrice}&daysSinceListed=1&query=${encodedQueryString}&exact=false`;
               }
-              pushTasksToQueue('tasks', { ...task, url, scrollTime });
+              const data = {
+                url,
+                scrollTime,
+                _id: task?._id,
+                userId: task?.userId,
+                email: task?.email,
+                radius: task?.radius,
+                postalCode: task?.postalCode,
+                blockedKeyWords: task?.blockedKeyWords,
+              };
+              pushTasksToQueue('tasks', data);
             },
             null, // onComplete (optional)
             true, // Start the job right now
