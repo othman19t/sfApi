@@ -4,7 +4,7 @@ import {
   stopCraigslistsJob,
   stopOfferUpJob,
   stopKarrotUpJob,
-} from '../cronJobs.js';
+} from '../cron/cronJobs.js';
 export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {

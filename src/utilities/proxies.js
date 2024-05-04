@@ -109,10 +109,10 @@ export const getFacebookProxies = async () => {
 // proxies();
 await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
 // handleDeleteAllBlockedIp('facebookProxies1');
-// const data = await handleGetListBlockedIps('proxies1');
+// const data = await handleGetListBlockedIps('tasks');
 
-const data = await handleGetListBlockedIps('facebookProxies1');
-console.log('data', data);
+// const data = await handleGetListBlockedIps('facebookProxies1');
+// console.log('data', data);
 
 export const addBlockedIp = handleAddBlockedIp; // call this funtion when you want to add a blocked IP and dont forget to add all ip object and proxies set name which is in the ip object proxiesName property.
 // export const getFacebookProxies = getFacebookproxies; //call this when want to get proxies to use for scrapping
