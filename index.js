@@ -6,7 +6,7 @@ import cors from 'cors';
 import { Server as HttpServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
-import { runFacebookJobs } from './src/cronJobs.js';
+import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
 
 import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
 
@@ -76,6 +76,7 @@ io.on('connection', (socket) => {
 });
 
 runFacebookJobs();
+runTasksQueue();
 
 mongoose
   .connect(dbUrl)

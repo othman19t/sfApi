@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
-import Task from './models/task.model.js'; // Assuming you have a Job model
+import Task from '../models/task.model.js'; // Assuming you have a Job model
+import { pushTasksToQueue, runTasksInQueue } from './queue.js';
 
 // all jobs scheduled for all platforms
 let facebookScheduledJobs = {};
@@ -40,6 +41,16 @@ export const stopKarrotUpJob = (job) => {
   }
 };
 
+export const runTasksQueue = async () => {
+  const handleRunTasksInQueue = async () => {
+    setTimeout(() => {
+      runTasksInQueue('tasks');
+    }, 5000);
+  };
+
+  new CronJob('*/1  * * * *', handleRunTasksInQueue, null, true);
+};
+
 // handles jobs scheduled for facebook
 export const runFacebookJobs = () => {
   console.log('Running runFacebookJobs');
@@ -48,30 +59,47 @@ export const runFacebookJobs = () => {
     console.log('running checkAndScheduleJobs');
     try {
       // Fetch all jobs from your database
-      const jobs = await Task.find({ platform: 'Facebook' });
+      const tasks = await Task.find({ platform: 'Facebook' });
 
-      jobs.forEach((job) => {
+      tasks.forEach((task) => {
         // If the job is 'Active' and not already scheduled
-        if (job.status === 'Active' && !facebookScheduledJobs[job._id]) {
-          facebookScheduledJobs[job._id] = new CronJob(
-            job.cronSchedule,
+        if (task.status === 'Active' && !facebookScheduledJobs[task._id]) {
+          facebookScheduledJobs[task._id] = new CronJob(
+            task.cronSchedule,
             () => {
-              console.log(`Executing job: ${job.name}`);
-              // Your job execution logic here
+              console.log(`Executing job: ${task.name}`);
+              // Your job execution logic to genrate url and scrollTime to append to task
+              let url = '';
+              let scrollTime = 5000;
+
+              // parseInt(task?.interval) <= 3
+              //   ? 10000
+              //   : parseInt(task?.interval) <= 10
+              //   ? 20000
+              //   : 30000;
+              const tags = task?.tags.join(' '); // Join the array elements into a single string, separated by spaces
+              var encodedQueryString = encodeURIComponent(tags); // Encode the query string to ensure it is a valid URL component
+              if (task?.platform == 'Facebook') {
+                url = `https://www.facebook.com/marketplace/${task?.location}/search?minPrice=${task?.minPrice}&maxPrice=${task?.maxPrice}&daysSinceListed=1&query=${encodedQueryString}&exact=false`;
+              }
+              pushTasksToQueue('tasks', { ...task, url, scrollTime });
             },
             null, // onComplete (optional)
             true, // Start the job right now
-            job.timezone // Specify the time zone
+            task.timezone // Specify the time zone
           );
 
           console.log(
-            `Job ${job.name}, cron schedule: ${job.cronSchedule}, scheduled with timezone ${job.timezone}.`
+            `Job ${task.name}, cron schedule: ${task.cronSchedule}, scheduled with timezone ${task.timezone}.`
           );
-        } else if (job.status !== 'Active' && facebookScheduledJobs[job._id]) {
+        } else if (
+          task.status !== 'Active' &&
+          facebookScheduledJobs[task._id]
+        ) {
           // If the job is not 'Active' but is present in facebookScheduledJobs, cancel and delete it.
-          facebookScheduledJobs[job._id].stop(); // Stop the cron job
-          delete facebookScheduledJobs[job._id]; // Remove it from the scheduledJobs
-          console.log(`Job ${job.name} canceled.`);
+          facebookScheduledJobs[task._id].stop(); // Stop the cron job
+          delete facebookScheduledJobs[task._id]; // Remove it from the scheduledJobs
+          console.log(`Job ${task.name} canceled.`);
         }
       });
     } catch (error) {
