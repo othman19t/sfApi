@@ -3,13 +3,14 @@ import { promisify } from 'util';
 import { callFacebookScrapper } from '../api/scrapper.js';
 import { getFacebookProxies } from '../utilities/proxies.js';
 
-const handleCallScrapper = async (tasks) => {
+const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
     const mainIps = await getFacebookProxies();
     console.log('task: ', JSON.parse(task));
     const scrap = await callFacebookScrapper({
       task: JSON.parse(task),
       mainIps,
+      firstTime,
     });
     console.log('scrap result: ', scrap);
   });
@@ -62,6 +63,8 @@ export async function runTasksInQueue(key) {
     console.error('Failed to run tasks in queue:', error);
   }
 }
+
+export const callScrapper = handleCallScrapper;
 // this gets the list of blocked ips of the given proxies set name
 const handleGetListOfData = async (key) => {
   const client = await createClient()
@@ -71,80 +74,3 @@ const handleGetListOfData = async (key) => {
   await client.disconnect();
   return data;
 };
-
-// Example usage with the key used previously
-// readAndUpdateRedis('myDataKey');
-// let i = 1;
-// export const addTaskToQueue = async (task) => {
-//   // Example usage
-
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-//   pushTasksToQueue('tasks', { num: `${i}` });
-
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-//   // pushTasksToQueue('tasks', { num: `${i}` });
-
-//   i++;
-//   const tasksData = await handleGetListOfData('tasks');
-//   console.log('====================================');
-//   console.log('tasksData from queue: ', tasksData);
-//   console.log('====================================');
-// };
-
-// export async function runTasksInQueue(key) {
-//   const client = await createClient()
-//     .on('error', (err) => console.log('Redis Client Error', err))
-//     .connect();
-
-//   // try {
-//   const allData = (await client.lRange(key, 0, -1)) || [];
-//   const ltrimAsync = promisify(client.lTrim).bind(client);
-
-//   console.log('length: ', allData?.length);
-//   // Fetch all elements first
-//   console.log('Fetched all data to remove:', allData);
-
-//   await ltrimAsync(key, 0, 102); // update this and use it to remove the last elements based on allData length
-
-//   console.log('All data removed because the list had fewer than 6 items.');
-//   // Math.ceil(allData?.length / 12)
-//   //TODO: call scrapper for all data
-//   await client.disconnect();
-//   // } catch (error) {
-//   //   console.error('Failed to read or update Redis:', error);
-//   // }
-// }
