@@ -3,6 +3,7 @@ export const getUserByToken = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findOne({ _id: userId });
+    console.log('getUserByToken is called');
     console.log('User: ' + user);
     res.status(200).send({
       message: 'successfully got user info',
