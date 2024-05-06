@@ -74,7 +74,7 @@ export const createTask = async (req, res) => {
       postalCode: savedTask?.postalCode,
       blockedKeyWords: savedTask?.blockedKeyWords,
     };
-    callScrapper(data, true);
+    callScrapper([data], true);
     //TODO: send saved task to client and update the client code to push this task to state tasks
     return res.status(201).send({
       message: 'successfully created a new task',
