@@ -5,6 +5,7 @@ import {
   stopOfferUpJob,
   stopKarrotUpJob,
 } from '../cron/cronJobs.js';
+import { callScrapper } from '../cron/queue.js';
 export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {
@@ -33,8 +34,7 @@ export const createTask = async (req, res) => {
   try {
     const userId = req?.user?.id;
 
-    console.log('creating task', req.body);
-    const newTasks = new Task({
+    const newTask = new Task({
       name: req?.body?.name,
       email: req?.body?.email,
       platform: req?.body?.platform,
@@ -53,7 +53,29 @@ export const createTask = async (req, res) => {
       location: req?.body?.location,
       userId,
     });
-    await newTasks.save();
+    // Save the new task and retrieve the saved task document which includes the _id
+    const savedTask = await newTask.save();
+    await savedTask.populate('location');
+    console.log('savedTask', savedTask);
+
+    const tags = savedTask?.tags.join(' '); // Join the array elements into a single string, separated by spaces
+    var encodedQueryString = encodeURIComponent(tags); // Encode the query string to ensure it is a valid URL component
+    let url = '';
+    if (savedTask?.platform == 'Facebook') {
+      url = `https://www.facebook.com/marketplace/${savedTask?.location?.locationId}/search?minPrice=${savedTask?.minPrice}&maxPrice=${savedTask?.maxPrice}&daysSinceListed=1&query=${encodedQueryString}&exact=false`;
+    }
+    const data = {
+      url,
+      scrollTime: 30000,
+      _id: savedTask?._id,
+      userId: savedTask?.userId,
+      email: savedTask?.email,
+      radius: savedTask?.radius,
+      postalCode: savedTask?.postalCode,
+      blockedKeyWords: savedTask?.blockedKeyWords,
+    };
+    callScrapper(data, true);
+    //TODO: send saved task to client and update the client code to push this task to state tasks
     return res.status(201).send({
       message: 'successfully created a new task',
       success: true,

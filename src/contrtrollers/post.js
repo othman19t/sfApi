@@ -27,7 +27,7 @@ export const getPosts = async (req, res) => {
   }
 };
 export const processInitialPosts = async (req, res) => {
-  const { task, posts } = req.body;
+  const { task, posts, firstTime } = req.body;
   const { radius, postalCode, email, userId } = req.body?.task;
   console.log('Processing initial posts', posts.length);
 
@@ -63,14 +63,16 @@ export const processInitialPosts = async (req, res) => {
           console.log(
             `trying to send emails when close posts length is: ${closePosts?.length} `
           );
-          sendNotificationEmail({
-            to: email,
-            img_src: post?.imgSrc,
-            title: post?.title,
-            location: post?.location,
-            post_url: post?.postUrl,
-            price: post?.price,
-          });
+          if (!firstTime) {
+            sendNotificationEmail({
+              to: email,
+              img_src: post?.imgSrc,
+              title: post?.title,
+              location: post?.location,
+              post_url: post?.postUrl,
+              price: post?.price,
+            });
+          }
         });
       }
       console.log('closePosts.length', closePosts.length);
