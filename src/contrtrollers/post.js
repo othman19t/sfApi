@@ -26,6 +26,32 @@ export const getPosts = async (req, res) => {
     });
   }
 };
+
+export const getPostsByTaskId = async (req, res) => {
+  const userId = req?.user?.id;
+  try {
+    const pageSize = 20;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const skip = (page - 1) * pageSize;
+
+    const posts = await Post.find({ userId, taskId: req.query.taskId })
+      .skip(skip)
+      .limit(pageSize)
+      .sort({ createdAt: -1 });
+
+    return res.status(200).send({
+      message: 'successfully retrieved posts',
+      success: true,
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: 'server error occurred',
+      success: false,
+    });
+  }
+};
 export const processInitialPosts = async (req, res) => {
   const { task, posts, firstTime } = req.body;
   const { radius, postalCode, email, userId } = req.body?.task;
