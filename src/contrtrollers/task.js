@@ -10,13 +10,13 @@ export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {
     const userId = req.user.id;
-    console.log('userId: ' + userId);
+
     const tasks = await Task.find({
       userId,
       status: { $nin: ['Deleted', 'Archived'] },
-    });
+    }).sort({ updatedAt: -1 });
 
-    console.log('tasks: ' + tasks);
+    console.log('tasks was retrieved');
     return res.status(200).send({
       message: 'successfully retrieved Tasks',
       success: true,
@@ -79,6 +79,7 @@ export const createTask = async (req, res) => {
     return res.status(201).send({
       message: 'successfully created a new task',
       success: true,
+      task: savedTask,
     });
   } catch (error) {
     console.log(error);
