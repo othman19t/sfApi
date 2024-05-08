@@ -75,7 +75,12 @@ io.on('connection', (socket) => {
   });
 
   // Example event
-  socket.on('example_event', (clientData, callback) => {
+  socket.on('getAllPostsNotifications', (clientData, callback) => {
+    console.log(`Received example_event with data: ${clientData}`);
+    callback({ Msg: 'clientData is received on socket eventBuzz' });
+  });
+
+  socket.on('getPostsNotificationsByTask', (clientData, callback) => {
     console.log(`Received example_event with data: ${clientData}`);
     callback({ Msg: 'clientData is received on socket eventBuzz' });
   });
