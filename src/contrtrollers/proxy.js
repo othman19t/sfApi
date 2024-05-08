@@ -3,7 +3,7 @@ export const blockProxy = async (req, res) => {
   const { host, proxiesName } = req?.body;
   console.log('body', req?.body);
   try {
-    addBlockedIp({ ip: `${host}` }, proxiesName);
+    addBlockedIp(host, proxiesName);
 
     return res.status(200).send({
       message: 'successfully blocked proxy user',

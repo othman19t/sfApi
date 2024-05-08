@@ -9,7 +9,10 @@ import routers from './src/routes/index.js';
 import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
 
 import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
-
+import {
+  removeRedisDataByKey,
+  getRedisDataByKey,
+} from './src/utilities/redisHelper.js';
 //TODO: to get proxies example
 const getIp = async () => {
   const mainIps = await getFacebookProxies();
@@ -25,6 +28,9 @@ const getIp = async () => {
 // };
 
 getIp();
+// removeRedisDataByKey('testProxiname');
+// const d = await getRedisDataByKey('testProxiname');
+// console.log('getRedisDataByKey=> ', d);
 dotenv.config();
 const sfClient = process.env.SF_CLIENT;
 const sfScrapper = process.env.SF_SCRAPPER;
