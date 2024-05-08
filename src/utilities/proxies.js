@@ -1,46 +1,7 @@
 import dotenv from 'dotenv';
 import { createClient } from 'redis';
+import { addDataToRedis, getRedisDataByKey } from './redisHelper.js';
 dotenv.config();
-// this removes key from redis. this is not needed for now but in the future we might need to use it.
-const handleDeleteAllBlockedIp = async (proxiesName) => {
-  const client = await createClient()
-    .on('error', (err) => console.log('Redis Client Error', err))
-    .connect();
-
-  await client.del(proxiesName);
-  await client.disconnect();
-};
-// this add blocked ip to redis
-const handleAddBlockedIp = async (ip, proxiesName) => {
-  try {
-    const client = await createClient()
-      .on('error', (err) => console.log('Redis Client Error', err))
-      .connect();
-
-    // Check if the IP already exists in the list
-    const existingIps = await client.lRange(proxiesName, 0, -1);
-    if (existingIps.includes(ip?.ip)) {
-      console.log('IP already exists in the list:', ip?.ip);
-    } else {
-      await client.lPush(proxiesName, ip?.ip);
-      console.log('Added blocked ip to redis: ', ip?.ip, proxiesName);
-    }
-
-    await client.disconnect();
-  } catch (error) {
-    console.log('Failed to add blocked', error);
-  }
-};
-
-// this gets the list of blocked ips of the given proxies set name
-const handleGetListBlockedIps = async (proxiesName) => {
-  const client = await createClient()
-    .on('error', (err) => console.log('Redis Client Error', err))
-    .connect();
-  const blockedIps = (await client.lRange(proxiesName, 0, -1)) || [];
-  await client.disconnect();
-  return blockedIps;
-};
 
 // this remove blocked ips from the given array and return the ones NOT blocked
 //also this removes the old ips from the blocked ips
@@ -48,7 +9,7 @@ const removBlockedIps = async (ips, proxiesName) => {
   const client = await createClient()
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
-  const blockedIps = (await client.lRange(proxiesName, 0, -1)) || [];
+  const blockedIps = await getRedisDataByKey(proxiesName);
   // Keep only the last 5 blocked IPs if there is more than 5
   if (blockedIps?.length > 5) {
     await client.lTrim(proxiesName, -5, -1);
@@ -60,6 +21,7 @@ const removBlockedIps = async (ips, proxiesName) => {
   await client.disconnect();
   return ips.filter((item) => !blocked.has(item.ip));
 };
+
 // this gets IPs from webShare proxies and call other functions to filter blocked ips and then return the NOT blocked IPs
 const handleGetFacebookProxies = async (token, user, pass, proxiesName) => {
   const url = new URL('https://proxy.webshare.io/api/v2/proxy/list/');
@@ -102,17 +64,8 @@ export const getFacebookProxies = async () => {
     PROXY_PASS1,
     'facebookProxies1'
   );
-  // console.log(proxies1, 'proxies1');
   return proxies1;
 };
-//TODO: the following commented code are just examples for depugging purposes
-// proxies();
-await handleAddBlockedIp({ ip: 'add-blocked-ip' }, 'proxies1');
-// handleDeleteAllBlockedIp('facebookProxies1');
-// const data = await handleGetListBlockedIps('tasks');
 
-// const data = await handleGetListBlockedIps('facebookProxies1');
-// console.log('data', data);
-
-export const addBlockedIp = handleAddBlockedIp; // call this funtion when you want to add a blocked IP and dont forget to add all ip object and proxies set name which is in the ip object proxiesName property.
-// export const getFacebookProxies = getFacebookproxies; //call this when want to get proxies to use for scrapping
+// this add blocked ip to redis
+export const addBlockedIp = addDataToRedis;
