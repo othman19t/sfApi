@@ -1,7 +1,6 @@
 import Post from '../models/post.model.js';
 import calculateDistance from '../utilities/calculateDistance.js';
 import { sendNotificationEmail } from '../utilities/sendEmails.js';
-import { addPostsNotifications } from '../notifications/PostsNotifications.js';
 import { addDataToRedis } from '../utilities/redisHelper.js';
 export const getPosts = async (req, res) => {
   const userId = req?.user?.id;
