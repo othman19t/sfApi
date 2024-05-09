@@ -13,7 +13,7 @@ import {
   removeRedisDataByKey,
   getRedisDataByKey,
 } from './src/utilities/redisHelper.js';
-import { getPostsFromNotifications } from './src/notifications/PostsNotifications.js';
+
 //TODO: to get proxies example
 const getIp = async () => {
   const mainIps = await getFacebookProxies();
