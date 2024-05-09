@@ -16,7 +16,7 @@ export const addDataToRedis = async (data, key) => {
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
 
-    // Check if the IP already exists in the list
+    // Check if the data already exists in the list
     const existingIps = await client.lRange(key, 0, -1);
     if (existingIps.includes(data)) {
       console.log('data already exists in the list:', data);

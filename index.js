@@ -13,6 +13,7 @@ import {
   removeRedisDataByKey,
   getRedisDataByKey,
 } from './src/utilities/redisHelper.js';
+import { getPostsFromNotifications } from './src/notifications/PostsNotifications.js';
 //TODO: to get proxies example
 const getIp = async () => {
   const mainIps = await getFacebookProxies();
@@ -75,14 +76,10 @@ io.on('connection', (socket) => {
   });
 
   // Example event
-  socket.on('getAllPostsNotifications', (clientData, callback) => {
-    console.log(`Received example_event with data: ${clientData}`);
-    callback({ Msg: 'clientData is received on socket eventBuzz' });
-  });
-
-  socket.on('getPostsNotificationsByTask', (clientData, callback) => {
-    console.log(`Received example_event with data: ${clientData}`);
-    callback({ Msg: 'clientData is received on socket eventBuzz' });
+  socket.on('getPostsNotifications', async (clientData, callback) => {
+    const posts = await getRedisDataByKey(clientData?.key);
+    await removeRedisDataByKey(clientData?.key);
+    callback({ Msg: 'successfully retrived posts notifications', posts });
   });
 });
 
