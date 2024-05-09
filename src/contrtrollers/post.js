@@ -1,6 +1,8 @@
 import Post from '../models/post.model.js';
 import calculateDistance from '../utilities/calculateDistance.js';
 import { sendNotificationEmail } from '../utilities/sendEmails.js';
+import { addPostsNotifications } from '../notifications/PostsNotifications.js';
+import { addDataToRedis } from '../utilities/redisHelper.js';
 export const getPosts = async (req, res) => {
   const userId = req?.user?.id;
   try {
@@ -53,8 +55,8 @@ export const getPostsByTaskId = async (req, res) => {
   }
 };
 export const processInitialPosts = async (req, res) => {
-  const { task, posts, firstTime } = req.body;
-  const { radius, postalCode, email, userId } = req.body?.task;
+  const { posts, firstTime } = req.body;
+  const { radius, postalCode, email, userId, _id: taskId } = req.body?.task;
   console.log('Processing initial posts', posts.length);
 
   let closePosts = [];
@@ -86,10 +88,8 @@ export const processInitialPosts = async (req, res) => {
       });
       if (closePosts?.length > 0) {
         closePosts.forEach((post) => {
-          console.log(
-            `trying to send emails when close posts length is: ${closePosts?.length} `
-          );
           if (!firstTime) {
+            addDataToRedis(post, userId);
             sendNotificationEmail({
               to: email,
               img_src: post?.imgSrc,

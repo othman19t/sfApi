@@ -10,7 +10,7 @@ export const getUserByToken = async (req, res) => {
       success: true,
       user: {
         loggedIn: true,
-        id: user.id,
+        id: user.id.toString(),
         name: `${user?.firstName} ${user?.lastName}`,
         email: user?.email,
         credit: user?.credit,
