@@ -77,9 +77,10 @@ io.on('connection', (socket) => {
 
   // Example event
   socket.on('getPostsNotifications', async (clientData, callback) => {
-    const posts = await getRedisDataByKey(clientData?.key);
-    await removeRedisDataByKey(clientData?.key);
-    callback({ Msg: 'successfully retrived posts notifications', posts });
+    const data = await getRedisDataByKey(clientData?.key);
+    removeRedisDataByKey(clientData?.key);
+
+    callback({ Msg: 'successfully retrived posts notifications', data });
   });
 });
 
