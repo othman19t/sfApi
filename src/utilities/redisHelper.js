@@ -11,6 +11,7 @@ export const removeRedisDataByKey = async (key) => {
 };
 // this add data to redis
 export const addDataToRedis = async (data, key) => {
+  console.log('addDataToRedis data:', data, key);
   try {
     const client = await createClient()
       .on('error', (err) => console.log('Redis Client Error', err))

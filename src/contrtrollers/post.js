@@ -8,6 +8,8 @@ export const getPosts = async (req, res) => {
     const pageSize = 20;
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const skip = (page - 1) * pageSize;
+    console.log('skip: ' + skip);
+    console.log('limit: ' + pageSize);
 
     const posts = await Post.find({ userId })
       .skip(skip)
@@ -40,6 +42,24 @@ export const getPostsByTaskId = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
+    return res.status(200).send({
+      message: 'successfully retrieved posts',
+      success: true,
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: 'server error occurred',
+      success: false,
+    });
+  }
+};
+
+export const getPostsByIds = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    const posts = await Post.find({ postId: { $in: ids } });
     return res.status(200).send({
       message: 'successfully retrieved posts',
       success: true,
@@ -88,7 +108,7 @@ export const processInitialPosts = async (req, res) => {
       if (closePosts?.length > 0) {
         closePosts.forEach((post) => {
           if (!firstTime) {
-            addDataToRedis(post, userId);
+            addDataToRedis(post?.postId, userId);
             sendNotificationEmail({
               to: email,
               img_src: post?.imgSrc,
