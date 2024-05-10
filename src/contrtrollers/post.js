@@ -1,7 +1,7 @@
 import Post from '../models/post.model.js';
 import calculateDistance from '../utilities/calculateDistance.js';
 import { sendNotificationEmail } from '../utilities/sendEmails.js';
-import { addDataToRedis } from '../utilities/redisHelper.js';
+import { handleCreateNotification } from '../api/notifications.js';
 export const getPosts = async (req, res) => {
   const userId = req?.user?.id;
   try {
@@ -77,10 +77,10 @@ export const processInitialPosts = async (req, res) => {
   const { posts, firstTime } = req.body;
   const { radius, postalCode, email, userId, _id: taskId } = req.body?.task;
   console.log('Processing initial posts', posts.length);
+  let notifications = [];
 
   let closePosts = [];
   try {
-    // get existing posts to use it to get the noneisting posts
     const existingIds = (
       await Post.find({
         postId: { $in: posts.map((doc) => doc.postId) },
@@ -88,55 +88,67 @@ export const processInitialPosts = async (req, res) => {
       })
     ).map((doc) => doc.postId);
 
-    // use the existing posts to get the non existing posts
     const nonexistingPosts = posts.filter(
       (doc) => !existingIds.includes(doc.postId)
     );
-    console.log('nonexistingPosts.lenght', nonexistingPosts?.length);
+
+    console.log('nonexistingPosts.length', nonexistingPosts?.length);
 
     if (nonexistingPosts.length > 0) {
       const result = await Post.insertMany(nonexistingPosts, {
         ordered: false,
       });
+      console.log('Insert result', result);
 
-      console.log('insert result', result);
-      nonexistingPosts.forEach(async (post) => {
-        if (calculateDistance(post.location, postalCode, radius)) {
-          closePosts = [...closePosts, post];
+      for (const post of nonexistingPosts) {
+        if (await calculateDistance(post.location, postalCode, radius)) {
+          closePosts.push(post);
         }
-      });
-      if (closePosts?.length > 0) {
-        closePosts.forEach((post) => {
+      }
+
+      if (closePosts.length > 0) {
+        for (const post of closePosts) {
           if (!firstTime) {
-            addDataToRedis(post?.postId, userId);
+            notifications.push({
+              postId: post.postId,
+              userId,
+              taskId,
+              status: 'unread',
+            });
             sendNotificationEmail({
               to: email,
-              img_src: post?.imgSrc,
-              title: post?.title,
-              location: post?.location,
-              post_url: post?.postUrl,
-              price: post?.price,
+              img_src: post.imgSrc,
+              title: post.title,
+              location: post.location,
+              post_url: post.postUrl,
+              price: post.price,
             });
           }
-        });
+        }
       }
+
+      if (notifications.length > 0) {
+        handleCreateNotification(notifications);
+      } else {
+        console.log('No notifications to send');
+      }
+
       console.log('closePosts.length', closePosts.length);
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
-        message: 'posts received and processed successfully',
+        message: 'Posts received and processed successfully',
       });
     } else {
       console.log(
-        `since nonexistingPosts.length is ${nonexistingPosts.length} 200 response code sent to event-buzz`
+        `Since nonexistingPosts.length is ${nonexistingPosts.length}, 200 response code sent`
       );
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
-        message: 'posts received and processed successfully',
+        message: 'Posts received and processed successfully',
       });
     }
   } catch (error) {
-    console.error('Error in receiveInitakPosts:', error);
+    console.error('Error in processing initial posts:', error);
     res.status(500).json({ success: false, message: error.message });
   }
-  console.log('req.body', req.body);
 };
