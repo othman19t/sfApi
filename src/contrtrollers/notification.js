@@ -1,14 +1,35 @@
 import Notification from '../models/notification.model.js';
-export const getUserNotifications = async (req, res) => {
+export const getUserNotifications = async (userId) => {
   try {
-    const userId = req.user.id;
+    // Fetch unread notifications for the user.
     const notifications = await Notification.find({ userId, status: 'unread' });
-    //TODO: change status of notifications to read
-    console.log('notifications: ' + notifications);
+
+    // Collect data to return.
+    const data = notifications.map((notification) => notification?.postId);
+
+    // If there are any notifications to update, change their status to 'read'.
+    if (notifications.length > 0) {
+      await Notification.updateMany(
+        { userId, status: 'unread' },
+        { $set: { status: 'read' } }
+      );
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export const createNotification = async (req, res) => {
+  const { notifications } = req.body;
+  try {
+    const insertNotifications = await Notification.insertMany(notifications);
+    console.log('insertNotifications', insertNotifications);
     return res.status(200).send({
-      message: 'successfully retrieved notifications',
+      message: 'successfully created notifications',
       success: true,
-      notifications,
     });
   } catch (error) {
     console.log(error);

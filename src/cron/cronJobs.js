@@ -74,7 +74,7 @@ export const runFacebookJobs = () => {
               let url = '';
               let scrollTime =
                 parseInt(task?.interval) <= 3
-                  ? 10000
+                  ? 5000
                   : parseInt(task?.interval) <= 10
                   ? 20000
                   : 30000;

@@ -9,6 +9,7 @@ import routers from './src/routes/index.js';
 import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
 
 import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
+import { getUserNotifications } from './src/contrtrollers/notification.js';
 import {
   removeRedisDataByKey,
   getRedisDataByKey,
@@ -77,8 +78,7 @@ io.on('connection', (socket) => {
 
   // Example event
   socket.on('getPostsNotifications', async (clientData, callback) => {
-    const data = await getRedisDataByKey(clientData?.key);
-    removeRedisDataByKey(clientData?.key);
+    const data = await getUserNotifications(clientData?.key);
 
     callback({ Msg: 'successfully retrived posts notifications', data });
   });

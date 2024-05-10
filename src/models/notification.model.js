@@ -6,23 +6,17 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    type: {
-      type: String,
-      required: true,
-    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // 'User' should match the name you gave to your user model
       required: true,
     },
-    postLocalId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post', // 'Post' should match the name you gave to your post model
-      required: true,
+    postId: {
+      type: String,
     },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
+    taskId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
     },
   },
   {
