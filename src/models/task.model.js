@@ -20,7 +20,10 @@ const taskSchema = new mongoose.Schema(
       ref: 'User', // 'User' should match the name you gave to your user model
       required: true,
     },
-
+    url: {
+      type: String,
+      required: true,
+    },
     interval: {
       type: String,
       required: true,

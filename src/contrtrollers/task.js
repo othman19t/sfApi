@@ -1,10 +1,5 @@
 import Task from '../models/task.model.js';
-import {
-  stopFacebookJob,
-  stopCraigslistsJob,
-  stopOfferUpJob,
-  stopKarrotUpJob,
-} from '../cron/cronJobs.js';
+import { stopFacebookJob } from '../cron/cronJobs.js';
 import { callScrapper } from '../cron/queue.js';
 export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
@@ -51,21 +46,14 @@ export const createTask = async (req, res) => {
       status: req?.body?.status,
       cronSchedule: req?.body?.cronSchedule,
       location: req?.body?.location,
+      url: req?.body?.url,
       userId,
     });
     // Save the new task and retrieve the saved task document which includes the _id
     const savedTask = await newTask.save();
-    await savedTask.populate('location');
-    console.log('savedTask', savedTask);
 
-    const tags = savedTask?.tags.join(' '); // Join the array elements into a single string, separated by spaces
-    var encodedQueryString = encodeURIComponent(tags); // Encode the query string to ensure it is a valid URL component
-    let url = '';
-    if (savedTask?.platform == 'Facebook') {
-      url = `https://www.facebook.com/marketplace/${savedTask?.location?.locationId}/search?minPrice=${savedTask?.minPrice}&maxPrice=${savedTask?.maxPrice}&daysSinceListed=1&query=${encodedQueryString}&exact=false`;
-    }
     const data = {
-      url,
+      url: savedTask?.url,
       scrollTime: 30000,
       _id: savedTask?._id,
       userId: savedTask?.userId,
@@ -96,18 +84,7 @@ export const updateTask = async (req, res) => {
 
   try {
     const task = await Task.findById(taskId);
-    if (task.platform == 'Facebook') {
-      stopFacebookJob(task);
-    }
-    if (task.platform == 'Craigslist') {
-      stopCraigslistsJob(task);
-    }
-    if (task.platform == 'OfferUp') {
-      stopOfferUpJob(task);
-    }
-    if (task.platform == 'Karrot') {
-      stopKarrotUpJob(task);
-    }
+    stopFacebookJob(task);
     const updatedTask = await Task.updateOne(
       { _id: taskId }, // Filter condition to match the document
       { $set: dataToUpdate } // The update operation
