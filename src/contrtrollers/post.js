@@ -59,7 +59,9 @@ export const getPostsByTaskId = async (req, res) => {
 export const getPostsByIds = async (req, res) => {
   try {
     const ids = req.body.ids;
-    const posts = await Post.find({ postId: { $in: ids } });
+    const posts = await Post.find({ postId: { $in: ids } }).sort({
+      createdAt: -1,
+    });
     return res.status(200).send({
       message: 'successfully retrieved posts',
       success: true,
