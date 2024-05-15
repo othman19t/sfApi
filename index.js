@@ -68,6 +68,9 @@ const io = new IOServer(httpServer, {
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '6mb' }));
 app.use('/api', routers);
+app.get('/health-check', (req, res) => {
+  return res.status(200).send('I am a live');
+});
 
 io.on('connection', (socket) => {
   console.log('A user connected');
