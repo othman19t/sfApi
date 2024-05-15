@@ -54,7 +54,7 @@ export const createTask = async (req, res) => {
 
     const data = {
       url: savedTask?.url,
-      scrollTime: 30000,
+      scrollTime: 15000,
       _id: savedTask?._id,
       userId: savedTask?.userId,
       email: savedTask?.email,
@@ -63,7 +63,7 @@ export const createTask = async (req, res) => {
       blockedKeyWords: savedTask?.blockedKeyWords,
     };
     callScrapper([JSON.stringify(data)], true);
-    //TODO: send saved task to client and update the client code to push this task to state tasks
+
     return res.status(201).send({
       message: 'successfully created a new task',
       success: true,
@@ -80,16 +80,26 @@ export const createTask = async (req, res) => {
 export const updateTask = async (req, res) => {
   const taskId = req?.body.taskId;
   const dataToUpdate = req?.body?.dataToUpdate;
-  console.log('req?.body', req?.body);
+  // console.log('req?.body', req?.body);
 
   try {
-    const task = await Task.findById(taskId);
-    stopFacebookJob(task);
-    const updatedTask = await Task.updateOne(
+    const updatedTask = await Task.findOneAndUpdate(
       { _id: taskId }, // Filter condition to match the document
-      { $set: dataToUpdate } // The update operation
+      { $set: dataToUpdate }, // The update operation
+      { new: true } // Return the modified document rather than the original
     );
-
+    const data = {
+      url: updatedTask?.url,
+      scrollTime: 15000,
+      _id: updatedTask?._id,
+      userId: updatedTask?.userId,
+      email: updatedTask?.email,
+      radius: updatedTask?.radius,
+      postalCode: updatedTask?.postalCode,
+      blockedKeyWords: updatedTask?.blockedKeyWords,
+    };
+    stopFacebookJob(data);
+    callScrapper([JSON.stringify(data)], true);
     return res.status(201).send({
       message: 'successfully updated task',
       success: true,
