@@ -10,9 +10,9 @@ const removBlockedIps = async (ips, proxiesName) => {
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
   const blockedIps = await getRedisDataByKey(proxiesName);
-  // console.log('====================================');
-  // console.log('blockedIps', blockedIps);
-  // console.log('====================================');
+  console.log('====================================');
+  console.log('blockedIps', blockedIps);
+  console.log('====================================');
   // Keep only the last 5 blocked IPs if there is more than 5
   if (blockedIps?.length > 5) {
     const trimIndex = blockedIps?.length - 5;
@@ -23,7 +23,12 @@ const removBlockedIps = async (ips, proxiesName) => {
   }
   const blocked = new Set(blockedIps);
   await client.disconnect();
-  return ips.filter((item) => !blocked.has(item.host));
+  const workingIps = ips.filter((item) => !blocked.has(item.host));
+  if (workingIps?.length == 0) {
+    return ips;
+  } else {
+    return workingIps;
+  }
 };
 
 // this gets IPs from webShare proxies and call other functions to filter blocked ips and then return the NOT blocked IPs
@@ -54,9 +59,6 @@ const handleGetFacebookProxies = async (token, user, pass, proxiesName) => {
     ips.push(ip);
   });
   const workingIpsForFacebook = await removBlockedIps(ips, proxiesName);
-  // console.log('====================================');
-  // console.log('workingIpsForFacebook', workingIpsForFacebook);
-  // console.log('====================================');
   return workingIpsForFacebook;
 };
 
@@ -90,6 +92,9 @@ export const getFacebookProxies = async () => {
     PROXY_PASS1,
     'facebookProxies1'
   );
+  console.log('====================================');
+  console.log('proxies1', proxies1?.length);
+  console.log('====================================');
 
   // Get the current value of the counter from the Redis database
   let counter = parseInt(await client.get('counter')) || 1;
@@ -97,6 +102,8 @@ export const getFacebookProxies = async () => {
   if (counter < proxies1.length) {
     // call moveelementstoend
     const rotatedProxies = moveElementsToEnd(proxies1, counter);
+    console.log('rotatedProxies1', rotatedProxies?.length);
+
     //increase the counter
     counter++;
     await client.set('counter', counter);

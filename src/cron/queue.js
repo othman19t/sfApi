@@ -6,6 +6,9 @@ import { getFacebookProxies } from '../utilities/proxies.js';
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
     const mainIps = await getFacebookProxies();
+    console.log('====================================');
+    console.log('mainIps: ', mainIps.length);
+    console.log('====================================');
     console.log('task: ', JSON.parse(task));
     const scrap = await callFacebookScrapper({
       task: JSON.parse(task),
