@@ -8,6 +8,8 @@ console.log('REDIS_HOST', REDIS_HOST);
 
 // this removes all data of the given key from redis
 export const removeRedisDataByKey = async (key) => {
+  console.log('REDIS_HOST', REDIS_HOST);
+
   const client = await createClient({
     socket: {
       host: REDIS_HOST,
@@ -22,6 +24,8 @@ export const removeRedisDataByKey = async (key) => {
 };
 // this add data to redis
 export const addDataToRedis = async (data, key) => {
+  console.log('REDIS_HOST', REDIS_HOST);
+
   console.log('addDataToRedis data:', data, key);
   try {
     const client = await createClient({
@@ -48,6 +52,8 @@ export const addDataToRedis = async (data, key) => {
 
 // this gets data of the given key
 export const getRedisDataByKey = async (key) => {
+  console.log('REDIS_HOST', REDIS_HOST);
+
   const client = await createClient({
     socket: {
       host: REDIS_HOST,
