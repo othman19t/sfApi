@@ -1,9 +1,8 @@
 import { createClient } from 'redis';
 
-// const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
-// const REDIS_PORT = process.env.REDIS_PORT || 6379;
-const REDIS_HOST = process.env.REDIS_HOST;
-const REDIS_PORT = process.env.REDIS_PORT;
+const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
+const REDIS_PORT = process.env.REDIS_PORT || 6379;
+
 // this removes all data of the given key from redis
 export const removeRedisDataByKey = async (key) => {
   const client = await createClient({
