@@ -36,7 +36,7 @@ getIp();
 dotenv.config();
 const sfClient = process.env.SF_CLIENT;
 const sfScrapper = process.env.SF_SCRAPPER;
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 4000;
 const dbUrl = process.env.DB_URL;
 const allowList = [`${sfClient}`, `${sfScrapper}`];
 const corsOptions = {
