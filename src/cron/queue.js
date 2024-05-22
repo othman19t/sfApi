@@ -28,7 +28,7 @@ const handleCallScrapper = async (tasks, firstTime = false) => {
 export const pushTasksToQueue = async (key, object) => {
   console.log('REDIS_HOST', REDIS_HOST);
   try {
-    createClient({
+    const client = await createClient({
       socket: {
         host: REDIS_HOST,
         port: REDIS_PORT,
@@ -60,7 +60,7 @@ export const pushTasksToQueue = async (key, object) => {
 export async function runTasksInQueue(key) {
   console.log('REDIS_HOST', REDIS_HOST);
   try {
-    createClient({
+    const client = await createClient({
       socket: {
         host: REDIS_HOST,
         port: REDIS_PORT,
