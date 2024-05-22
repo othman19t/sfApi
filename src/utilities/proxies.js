@@ -2,8 +2,8 @@ import dotenv from 'dotenv';
 import { createClient } from 'redis';
 import { addDataToRedis, getRedisDataByKey } from './redisHelper.js';
 dotenv.config();
-const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
-const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
 
 // this remove blocked ips from the given array and return the ones NOT blocked
 //also this removes the old ips from the blocked ips
