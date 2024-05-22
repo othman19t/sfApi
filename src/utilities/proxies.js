@@ -4,7 +4,7 @@ import { addDataToRedis, getRedisDataByKey } from './redisHelper.js';
 dotenv.config();
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
-
+console.log('REDIS_HOST', REDIS_HOST);
 // this remove blocked ips from the given array and return the ones NOT blocked
 //also this removes the old ips from the blocked ips
 const removBlockedIps = async (ips, proxiesName) => {

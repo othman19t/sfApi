@@ -8,7 +8,7 @@ dotenv.config();
 
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
-
+console.log('REDIS_HOST', REDIS_HOST);
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
     const mainIps = await getFacebookProxies();
