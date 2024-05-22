@@ -28,9 +28,11 @@ export const addDataToRedis = async (data, key) => {
 
   console.log('addDataToRedis data:', data, key);
   try {
-    const client = await createClient({
-      host: REDIS_HOST,
-      port: REDIS_PORT,
+    createClient({
+      socket: {
+        host: REDIS_HOST,
+        port: REDIS_PORT,
+      },
     })
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
