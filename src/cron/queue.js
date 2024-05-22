@@ -8,7 +8,7 @@ dotenv.config();
 
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
-console.log('REDIS_HOST', REDIS_HOST);
+
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
     const mainIps = await getFacebookProxies();
@@ -26,6 +26,7 @@ const handleCallScrapper = async (tasks, firstTime = false) => {
 };
 // // this storeDataInRedis
 export const pushTasksToQueue = async (key, object) => {
+  console.log('REDIS_HOST', REDIS_HOST);
   try {
     const client = await createClient({
       host: REDIS_HOST,
@@ -55,6 +56,7 @@ export const pushTasksToQueue = async (key, object) => {
 };
 
 export async function runTasksInQueue(key) {
+  console.log('REDIS_HOST', REDIS_HOST);
   try {
     const client = await createClient({
       host: REDIS_HOST,
