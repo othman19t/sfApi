@@ -2,11 +2,8 @@ import { createClient } from 'redis';
 import { promisify } from 'util';
 import { callFacebookScrapper } from '../api/scrapper.js';
 import { getFacebookProxies } from '../utilities/proxies.js';
-// const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
-// const REDIS_PORT = process.env.REDIS_PORT || 6379;
-
-const REDIS_HOST = process.env.REDIS_HOST;
-const REDIS_PORT = process.env.REDIS_PORT;
+const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
+const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
