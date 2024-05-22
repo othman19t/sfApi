@@ -2,6 +2,11 @@ import { createClient } from 'redis';
 import { promisify } from 'util';
 import { callFacebookScrapper } from '../api/scrapper.js';
 import { getFacebookProxies } from '../utilities/proxies.js';
+// const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
+// const REDIS_PORT = process.env.REDIS_PORT || 6379;
+
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
 
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
@@ -21,7 +26,10 @@ const handleCallScrapper = async (tasks, firstTime = false) => {
 // // this storeDataInRedis
 export const pushTasksToQueue = async (key, object) => {
   try {
-    const client = await createClient()
+    const client = await createClient({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    })
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
 
@@ -47,7 +55,10 @@ export const pushTasksToQueue = async (key, object) => {
 
 export async function runTasksInQueue(key) {
   try {
-    const client = await createClient()
+    const client = await createClient({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    })
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
     // Get all indices of the array from Redis
@@ -70,7 +81,12 @@ export async function runTasksInQueue(key) {
 export const callScrapper = handleCallScrapper;
 // this gets the list of blocked ips of the given proxies set name
 const handleGetListOfData = async (key) => {
-  const client = await createClient()
+  const client = await createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    },
+  })
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
   const data = (await client.lRange(key, 0, -1)) || [];

@@ -2,11 +2,20 @@ import dotenv from 'dotenv';
 import { createClient } from 'redis';
 import { addDataToRedis, getRedisDataByKey } from './redisHelper.js';
 dotenv.config();
+// const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
+// const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
 
 // this remove blocked ips from the given array and return the ones NOT blocked
 //also this removes the old ips from the blocked ips
 const removBlockedIps = async (ips, proxiesName) => {
-  const client = await createClient()
+  const client = await createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    },
+  })
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
   const blockedIps = await getRedisDataByKey(proxiesName);
@@ -79,7 +88,12 @@ function moveElementsToEnd(array, numberOfElements) {
 
 // this function would be called when scrapping data in the feature we will need to add one more account to have more ips and concatate all ips togther before returning the ips to use them for scrapping
 export const getFacebookProxies = async () => {
-  const client = await createClient()
+  const client = await createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    },
+  })
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
 

@@ -1,8 +1,17 @@
 import { createClient } from 'redis';
 
+// const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
+// const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
 // this removes all data of the given key from redis
 export const removeRedisDataByKey = async (key) => {
-  const client = await createClient()
+  const client = await createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    },
+  })
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
 
@@ -13,7 +22,10 @@ export const removeRedisDataByKey = async (key) => {
 export const addDataToRedis = async (data, key) => {
   console.log('addDataToRedis data:', data, key);
   try {
-    const client = await createClient()
+    const client = await createClient({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    })
       .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
 
@@ -34,7 +46,12 @@ export const addDataToRedis = async (data, key) => {
 
 // this gets data of the given key
 export const getRedisDataByKey = async (key) => {
-  const client = await createClient()
+  const client = await createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    },
+  })
     .on('error', (err) => console.log('Redis Client Error', err))
     .connect();
   const blockedIps = (await client.lRange(key, 0, -1)) || [];
