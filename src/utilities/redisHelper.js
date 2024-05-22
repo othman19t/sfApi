@@ -2,8 +2,8 @@ import { createClient } from 'redis';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
-const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
 
 // this removes all data of the given key from redis
 export const removeRedisDataByKey = async (key) => {
