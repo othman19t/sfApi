@@ -4,6 +4,7 @@ dotenv.config();
 
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
+console.log('REDIS_HOST', REDIS_HOST);
 
 // this removes all data of the given key from redis
 export const removeRedisDataByKey = async (key) => {
