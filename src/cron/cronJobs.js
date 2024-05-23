@@ -60,6 +60,7 @@ export const runFacebookJobs = () => {
                 radius: task?.radius,
                 postalCode: task?.postalCode,
                 blockedKeyWords: task?.blockedKeyWords,
+                sendNotificationEmail: task?.sendNotificationEmail,
               };
               pushTasksToQueue('tasks', data);
             },

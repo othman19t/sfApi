@@ -4,7 +4,7 @@ dotenv.config();
 //EMAIL_API_KEY
 
 const apiKey = process.env.EMAIL_API_KEY;
-export const sendNotificationEmail = ({
+export const sendEmail = ({
   to,
   img_src,
   title,

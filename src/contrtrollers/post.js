@@ -1,6 +1,6 @@
 import Post from '../models/post.model.js';
 import calculateDistance from '../utilities/calculateDistance.js';
-import { sendNotificationEmail } from '../utilities/sendEmails.js';
+import { sendEmail } from '../utilities/sendEmails.js';
 import { handleCreateNotification } from '../api/notifications.js';
 export const getPosts = async (req, res) => {
   const userId = req?.user?.id;
@@ -77,7 +77,14 @@ export const getPostsByIds = async (req, res) => {
 };
 export const processInitialPosts = async (req, res) => {
   const { posts, firstTime } = req.body;
-  const { radius, postalCode, email, userId, _id: taskId } = req.body?.task;
+  const {
+    radius,
+    postalCode,
+    email,
+    userId,
+    sendNotificationEmail,
+    _id: taskId,
+  } = req.body?.task;
   console.log('Processing initial posts', posts.length);
   let notifications = [];
 
@@ -117,14 +124,16 @@ export const processInitialPosts = async (req, res) => {
               taskId,
               status: 'unread',
             });
-            sendNotificationEmail({
-              to: email,
-              img_src: post.imgSrc,
-              title: post.title,
-              location: post.location,
-              post_url: post.postUrl,
-              price: post.price,
-            });
+            if (sendNotificationEmail) {
+              sendEmail({
+                to: email,
+                img_src: post.imgSrc,
+                title: post.title,
+                location: post.location,
+                post_url: post.postUrl,
+                price: post.price,
+              });
+            }
           }
         }
       }
