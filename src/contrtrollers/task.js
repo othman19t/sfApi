@@ -48,6 +48,7 @@ export const createTask = async (req, res) => {
       location: req?.body?.location,
       url: req?.body?.url,
       userId,
+      sendNotificationEmail: req?.body?.sendNotificationEmail,
     });
     // Save the new task and retrieve the saved task document which includes the _id
     const savedTask = await newTask.save();
