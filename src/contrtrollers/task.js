@@ -1,6 +1,6 @@
 import Task from '../models/task.model.js';
-import { stopFacebookJob } from '../cron/cronJobs.js';
-import { callScrapper } from '../cron/queue.js';
+import { stopJobs } from '../cron/jobs.js';
+import { callScrapper } from '../cron/jobs.js';
 export const getTasks = async (req, res) => {
   //TODO: update the code accordingly once other ports are ready
   try {
@@ -63,7 +63,7 @@ export const createTask = async (req, res) => {
       postalCode: savedTask?.postalCode,
       blockedKeyWords: savedTask?.blockedKeyWords,
     };
-    callScrapper([JSON.stringify(data)], true);
+    callScrapper([data], true);
 
     return res.status(201).send({
       message: 'successfully created a new task',
@@ -84,6 +84,7 @@ export const updateTask = async (req, res) => {
   // console.log('req?.body', req?.body);
 
   try {
+    const oldTask = await Task.findById(taskId);
     const updatedTask = await Task.findOneAndUpdate(
       { _id: taskId }, // Filter condition to match the document
       { $set: dataToUpdate }, // The update operation
@@ -98,9 +99,11 @@ export const updateTask = async (req, res) => {
       radius: updatedTask?.radius,
       postalCode: updatedTask?.postalCode,
       blockedKeyWords: updatedTask?.blockedKeyWords,
+      interval: updatedTask?.interval,
     };
-    stopFacebookJob(data);
-    callScrapper([JSON.stringify(data)], true);
+
+    stopJobs[oldTask?.interval](data);
+    callScrapper([data], true);
     return res.status(201).send({
       message: 'successfully updated task',
       success: true,

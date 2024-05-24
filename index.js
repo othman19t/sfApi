@@ -6,14 +6,15 @@ import cors from 'cors';
 import { Server as HttpServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
-import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
+// import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
+import { runJobs } from './src/cron/jobs.js';
 
 import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
 import { getUserNotifications } from './src/contrtrollers/notification.js';
-import {
-  removeRedisDataByKey,
-  getRedisDataByKey,
-} from './src/utilities/redisHelper.js';
+// import {
+//   removeRedisDataByKey,
+//   getRedisDataByKey,
+// } from './src/utilities/redisHelper.js';
 
 //TODO: to get proxies example
 const getIp = async () => {
@@ -29,7 +30,7 @@ const getIp = async () => {
 //   password: process.env.BACK_UP_PASSWORD,
 // };
 
-getIp();
+// getIp();
 // removeRedisDataByKey('testProxiname');
 // const d = await getRedisDataByKey('testProxiname');
 // console.log('getRedisDataByKey=> ', d);
@@ -41,12 +42,12 @@ const dbUrl = process.env.DB_URL;
 const allowList = [`${sfClient}`, `${sfScrapper}`];
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log('Attempting CORS for origin:', origin); // Helps in debugging
+    // console.log('Attempting CORS for origin:', origin); // Helps in debugging
     if (allowList.indexOf(origin) !== -1 || !origin) {
-      console.log('Allowed CORS for origin:', origin);
+      // console.log('Allowed CORS for origin:', origin);
       callback(null, true);
     } else {
-      console.log('Blocked by CORS for origin:', origin);
+      // console.log('Blocked by CORS for origin:', origin);
       callback(new Error(`Origin ${origin} not allowed by CORS`));
     }
   },
@@ -69,6 +70,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '6mb' }));
 app.use('/api', routers);
 app.get('/health-check', (req, res) => {
+  console.log('health-check received');
   return res.status(200).send('I am a live');
 });
 
@@ -87,9 +89,9 @@ io.on('connection', (socket) => {
   });
 });
 
-runFacebookJobs();
-runTasksQueue();
-
+// runFacebookJobs();
+// runTasksQueue();
+runJobs();
 mongoose
   .connect(dbUrl)
   .then(() => {
