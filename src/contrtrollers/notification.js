@@ -26,7 +26,7 @@ export const createNotification = async (req, res) => {
   const { notifications } = req.body;
   try {
     const insertNotifications = await Notification.insertMany(notifications);
-    console.log('insertNotifications', insertNotifications);
+    // console.log('insertNotifications', insertNotifications);
     return res.status(200).send({
       message: 'successfully created notifications',
       success: true,

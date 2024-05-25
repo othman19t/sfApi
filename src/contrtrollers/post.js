@@ -107,7 +107,6 @@ export const processInitialPosts = async (req, res) => {
       const result = await Post.insertMany(nonexistingPosts, {
         ordered: false,
       });
-      console.log('Insert result', result);
 
       for (const post of nonexistingPosts) {
         if (await calculateDistance(post.location, postalCode, radius)) {
