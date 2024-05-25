@@ -1,9 +1,8 @@
-import { addBlockedIp, getFacebookProxies } from '../utilities/proxies.js';
+import { removeBlockedProxyFromRedis } from '../utilities/proxies.js';
 export const blockProxy = async (req, res) => {
   const { host, proxiesName } = req?.body;
-  console.log('body', req?.body);
   try {
-    addBlockedIp(host, proxiesName);
+    removeBlockedProxyFromRedis(host, proxiesName);
 
     return res.status(200).send({
       message: 'successfully blocked proxy user',
@@ -16,8 +15,4 @@ export const blockProxy = async (req, res) => {
       success: false,
     });
   }
-};
-export const hendleGetFacebookProxies = async (req, res) => {
-  const proxies = await getFacebookProxies();
-  return res.status(200).json(proxies);
 };

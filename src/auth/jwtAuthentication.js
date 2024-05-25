@@ -5,7 +5,7 @@ dotenv.config();
 const secret = process.env.JWT_SECRET;
 
 const jwtAuthentication = (req, res, next) => {
-  console.log('JWT authentication hit');
+  // console.log('JWT authentication hit');
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -13,7 +13,7 @@ const jwtAuthentication = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1]; // Extract the token part from the header
-  console.log('Token from header: ', token);
+  // console.log('Token from header: ', token);
 
   jwt.verify(token, secret, (err, user) => {
     if (err) {

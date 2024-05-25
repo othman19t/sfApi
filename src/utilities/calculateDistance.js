@@ -1,14 +1,12 @@
 import googleMaps from '@google/maps';
 
 const calculateDistance = async (address1, address2, radius) => {
-  console.log('====================================');
-  console.log(
-    'calculateDistance logs of data passed:',
-    address1,
-    address2,
-    radius
-  );
-  console.log('====================================');
+  // console.log(
+  //   'calculateDistance logs of data passed:',
+  //   address1,
+  //   address2,
+  //   radius
+  // );
   return new Promise((resolve, reject) => {
     const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
 
@@ -31,9 +29,8 @@ const calculateDistance = async (address1, address2, radius) => {
 
         const result = { km: d, close: parseInt(radius) >= parseInt(d) };
 
-        console.log('====================================');
-        console.log('calculateDistance logs of result:', result);
-        console.log('====================================');
+        // console.log('calculateDistance logs of result:', result);
+
         resolve(result.close); // Resolve the promise with the result
       })
       .catch((err) => {

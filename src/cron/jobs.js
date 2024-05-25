@@ -2,16 +2,25 @@ import { CronJob } from 'cron';
 import Task from '../models/task.model.js'; // Assuming you have a Task model
 import { callFacebookScrapper } from '../api/scrapper.js';
 import { getFacebookProxies } from '../utilities/proxies.js';
-
+import dotenv from 'dotenv';
+dotenv.config();
+const backupIp = {
+  host: process.env.BACK_UP_IP,
+  port: process.env.BACK_UP_PORT,
+  username: process.env.BACK_UP_USERNAME,
+  password: process.env.BACK_UP_PASSWORD,
+  proxiesName: 'backup',
+};
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
     const mainIps = await getFacebookProxies();
     const scrap = await callFacebookScrapper({
       task: task,
       mainIps,
+      backupIp,
       firstTime,
     });
-    console.log('scrap result: ', scrap);
+    console.log('scrap result: ', scrap?.message);
   });
 };
 export const callScrapper = handleCallScrapper;
@@ -106,10 +115,10 @@ const runJobsForInterval = (interval) => {
               console.log(`Executing job: ${task.name}`);
               let scrollTime =
                 parseInt(task?.interval) <= 3
-                  ? 1300
+                  ? 13000
                   : parseInt(task?.interval) <= 10
-                  ? 1500
-                  : 2000;
+                  ? 15000
+                  : 20000;
 
               const data = {
                 url: task?.url,

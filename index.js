@@ -6,35 +6,21 @@ import cors from 'cors';
 import { Server as HttpServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import routers from './src/routes/index.js';
-// import { runFacebookJobs, runTasksQueue } from './src/cron/cronJobs.js';
 import { runJobs } from './src/cron/jobs.js';
 
-import { getFacebookProxies, addBlockedIp } from './src/utilities/proxies.js';
 import { getUserNotifications } from './src/contrtrollers/notification.js';
-// import {
-//   removeRedisDataByKey,
-//   getRedisDataByKey,
-// } from './src/utilities/redisHelper.js';
-
-//TODO: to get proxies example
-const getIp = async () => {
-  const mainIps = await getFacebookProxies();
-  console.log('Ip: ', JSON.stringify(mainIps));
-};
-
+import {
+  storeProxiesDataInRedis,
+  getProxies,
+  checkAndUpdateProxies,
+} from './src/utilities/proxies.js';
 // TODO: backup proxy => this might be better of you keep it in scrapper server
-// const backupIp = {
-//   host: process.env.BACK_UP_IP,
-//   port: process.env.BACK_UP_PORT,
-//   username: process.env.BACK_UP_USERNAME,
-//   password: process.env.BACK_UP_PASSWORD,
-// };
 
-// getIp();
-// removeRedisDataByKey('testProxiname');
-// const d = await getRedisDataByKey('testProxiname');
-// console.log('getRedisDataByKey=> ', d);
+// setInterval(performScheduledTask, 30000);
 dotenv.config();
+const PROXY_TOKEN1 = process.env.PROXY_TOKEN1;
+const PROXY_USER1 = process.env.PROXY_USER1; // Username for proxy auth
+const PROXY_PASS1 = process.env.PROXY_PASS1; // Password for proxy auth
 const sfClient = process.env.SF_CLIENT;
 const sfScrapper = process.env.SF_SCRAPPER;
 const PORT = process.env.PORT || 4000;
@@ -56,9 +42,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-// app.get('/', (req, res) => {
-//   res.send('Hello, world!');
-// });
 const app = express();
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer, {
@@ -88,10 +71,27 @@ io.on('connection', (socket) => {
     callback({ Msg: 'successfully retrived posts notifications', data });
   });
 });
+const initializeProxies = async () => {
+  try {
+    const proxies1 = await getProxies(
+      PROXY_TOKEN1,
+      PROXY_USER1,
+      PROXY_PASS1,
+      'facebookProxies1'
+    );
+    await storeProxiesDataInRedis(proxies1, 'facebookProxies1'); // Use a suitable key for your proxies
+    console.log('Proxies initialized and stored in Redis');
+  } catch (error) {
+    console.error('Error initializing proxies:', error);
+  }
+};
 
-// runFacebookJobs();
-// runTasksQueue();
 runJobs();
+initializeProxies();
+// Schedule the main function to run periodically, e.g., every 30 seconds to check for new proxies.
+setInterval(() => {
+  checkAndUpdateProxies('facebookProxies1');
+}, 30000); // 30 seconds interval
 mongoose
   .connect(dbUrl)
   .then(() => {
