@@ -13,7 +13,7 @@ const handleGetProxies = async (
   user,
   pass,
   proxiesName,
-  expireMinutes = 20
+  expireMinutes = 21
 ) => {
   const url = new URL('https://proxy.webshare.io/api/v2/proxy/list/');
   url.searchParams.append('mode', 'direct');
@@ -77,7 +77,7 @@ export const getProxies = handleGetProxies;
 
 // Rotate proxies so the same proxy doesn't get used in row multiple times
 export const rotateProxies = async (proxiesArray) => {
-  if (proxiesArray?.length == 0) {
+  if (proxiesArray?.length === 0) {
     return [];
   }
   try {
@@ -92,18 +92,17 @@ export const rotateProxies = async (proxiesArray) => {
 
     await client.connect();
 
-    let proxyCounter = parseInt(await client.get('proxyCounter')) || 1;
+    let proxyCounter = parseInt(await client.get('proxyCounter')) || 0;
 
-    // Handle cases where the number of elements to move is greater than the array length or non-positive
-    if (proxyCounter <= 0 || proxyCounter >= proxiesArray.length) {
-      await client.disconnect();
-      return proxiesArray;
+    // If the proxyCounter is greater than or equal to the length of proxiesArray, reset it to 0
+    if (proxyCounter >= proxiesArray.length) {
+      proxyCounter = 0;
     }
 
     // Move the specified number of elements to the end
     const elementsToMove = proxiesArray.slice(0, proxyCounter);
     const remainingElements = proxiesArray.slice(proxyCounter);
-    proxyCounter = (proxyCounter % proxiesArray.length) + 1; // Ensure the counter cycles through the array length
+    proxyCounter = (proxyCounter + 1) % proxiesArray.length; // Ensure the counter cycles through the array length
     await client.set('proxyCounter', proxyCounter);
 
     await client.disconnect();
@@ -287,15 +286,9 @@ const pollProxyServer = async (key) => {
       key
     );
     if (newProxies.length > 0) {
-      const newProxyCreationTime = new Date(newProxies[0].createdAt).getTime();
-      const currentTime = new Date().getTime();
-
-      if (currentTime - newProxyCreationTime <= 60000) {
-        // 1 minute in milliseconds
-        await storeProxiesDataInRedis(newProxies, key);
-        console.log('Proxies refreshed and stored in Redis');
-        return true;
-      }
+      await storeProxiesDataInRedis(newProxies, key);
+      console.log('Proxies refreshed and stored in Redis');
+      return true;
     }
     return false;
   } catch (error) {
