@@ -12,7 +12,6 @@ import { getUserNotifications } from './src/contrtrollers/notification.js';
 import {
   storeProxiesDataInRedis,
   getProxies,
-  checkAndUpdateProxies,
 } from './src/utilities/proxies.js';
 // TODO: backup proxy => this might be better of you keep it in scrapper server
 
@@ -88,10 +87,6 @@ const initializeProxies = async () => {
 
 runJobs();
 initializeProxies();
-// Schedule the main function to run periodically, e.g., every 30 seconds to check for new proxies.
-setInterval(() => {
-  checkAndUpdateProxies('facebookProxies1');
-}, 30000); // 30 seconds interval
 mongoose
   .connect(dbUrl)
   .then(() => {

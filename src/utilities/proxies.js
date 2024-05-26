@@ -13,7 +13,7 @@ const handleGetProxies = async (
   user,
   pass,
   proxiesName,
-  expireMinutes = 21
+  expireMinutes = 30
 ) => {
   const url = new URL('https://proxy.webshare.io/api/v2/proxy/list/');
   url.searchParams.append('mode', 'direct');
@@ -297,37 +297,13 @@ const pollProxyServer = async (key) => {
   }
 };
 
-// Check and update proxies
-export const checkAndUpdateProxies = async (key) => {
-  const expirationTime = await getProxyExpiration(key);
-  const currentTime = new Date().getTime();
-
-  if (expirationTime && expirationTime - currentTime <= 60000) {
-    // Proxies are expiring within 1 minute
-    console.log('Proxies are about to expire, start polling for new proxies');
-    const intervalId = setInterval(async () => {
-      const updated = await pollProxyServer(key);
-      if (updated) {
-        clearInterval(intervalId);
-      }
-    }, 10000); // Poll every 10 seconds
-  } else if (!expirationTime) {
-    // No proxies left
-    console.log('No proxies left, start polling for new proxies');
-    const intervalId = setInterval(async () => {
-      const updated = await pollProxyServer(key);
-      if (updated) {
-        clearInterval(intervalId);
-      }
-    }, 10000); // Poll every 10 seconds
-  } else {
-    console.log('Proxies are not expiring soon');
-  }
-};
-
 // Get Facebook proxies and rotate them
 export const getFacebookProxies = async () => {
   const proxies = await getProxiesFromRedis('facebookProxies1');
+  if (proxies.length === 0) {
+    pollProxyServer('facebookProxies1');
+    return [];
+  }
   const rotatedProxies = await rotateProxies(proxies);
   return rotatedProxies;
 };
