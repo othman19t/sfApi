@@ -124,14 +124,14 @@ export const processInitialPosts = async (req, res) => {
               status: 'unread',
             });
             if (sendNotificationEmail) {
-              sendEmail({
-                to: email,
-                img_src: post.imgSrc,
-                title: post.title,
-                location: post.location,
-                post_url: post.postUrl,
-                price: post.price,
-              });
+              // sendEmail({
+              //   to: email,
+              //   img_src: post.imgSrc,
+              //   title: post.title,
+              //   location: post.location,
+              //   post_url: post.postUrl,
+              //   price: post.price,
+              // });
             }
           }
         }
