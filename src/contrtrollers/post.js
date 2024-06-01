@@ -1,6 +1,7 @@
 import Post from '../models/post.model.js';
 import calculateDistance from '../utilities/calculateDistance.js';
-import { sendEmail } from '../utilities/sendEmails.js';
+// import { sendEmail } from '../utilities/sendEmails.js';
+import { sendEmail } from '../utilities/awsSendEmail.js';
 import { handleCreateNotification } from '../api/notifications.js';
 export const getPosts = async (req, res) => {
   const userId = req?.user?.id;
@@ -124,14 +125,25 @@ export const processInitialPosts = async (req, res) => {
               status: 'unread',
             });
             if (sendNotificationEmail) {
+              // new aws Example usage
               sendEmail({
-                to: email,
-                img_src: post.imgSrc,
+                toAddress: email,
+                imgSrc: post.imgSrc,
                 title: post.title,
-                location: post.location,
-                post_url: post.postUrl,
                 price: post.price,
+                location: post.location,
+                postUrl: post.postUrl,
               });
+
+              //Old email service example => this should be removed once aws example works properly
+              // sendEmail({
+              //   to: email,
+              //   img_src: post.imgSrc,
+              //   title: post.title,
+              //   location: post.location,
+              //   post_url: post.postUrl,
+              //   price: post.price,
+              // });
             }
           }
         }
