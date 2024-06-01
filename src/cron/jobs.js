@@ -1,7 +1,7 @@
 import { CronJob } from 'cron';
 import Task from '../models/task.model.js'; // Assuming you have a Task model
 import { callFacebookScrapper } from '../api/scrapper.js';
-import { getFacebookProxies } from '../utilities/proxies.js';
+// import { getFacebookProxies } from '../utilities/proxies.js';
 import dotenv from 'dotenv';
 dotenv.config();
 const backupIp = {
@@ -13,10 +13,10 @@ const backupIp = {
 };
 const handleCallScrapper = async (tasks, firstTime = false) => {
   tasks.forEach(async (task) => {
-    const mainIps = await getFacebookProxies();
+    // const mainIps = await getFacebookProxies();
     const scrap = await callFacebookScrapper({
       task: task,
-      mainIps,
+      mainIps: [],
       backupIp,
       firstTime,
     });
