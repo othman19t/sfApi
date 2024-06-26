@@ -136,6 +136,7 @@ export const processInitialPosts = async (req, res) => {
               });
 
               //Old email service example => this should be removed once aws example works properly
+
               // sendEmail({
               //   to: email,
               //   img_src: post.imgSrc,
