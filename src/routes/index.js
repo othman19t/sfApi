@@ -5,7 +5,7 @@ import notification from './notification.js';
 import post from './post.js';
 import task from './task.js';
 import location from './location.js';
-import proxy from './proxy.js';
+// import proxy from './proxy.js';
 
 const routers = Router();
 
@@ -15,6 +15,6 @@ routers.use('/notification', notification);
 routers.use('/post', post);
 routers.use('/task', task);
 routers.use('/location', location);
-routers.use('/proxy', proxy);
+// routers.use('/proxy', proxy);
 
 export default routers;

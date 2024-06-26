@@ -9,17 +9,17 @@ import routers from './src/routes/index.js';
 import { runJobs } from './src/cron/jobs.js';
 
 import { getUserNotifications } from './src/contrtrollers/notification.js';
-import {
-  storeProxiesDataInRedis,
-  getProxies,
-} from './src/utilities/proxies.js';
+// import {
+//   storeProxiesDataInRedis,
+//   getProxies,
+// } from './src/utilities/proxies.js';
 // TODO: backup proxy => this might be better of you keep it in scrapper server
 
 // setInterval(performScheduledTask, 30000);
 dotenv.config();
-const PROXY_TOKEN1 = process.env.PROXY_TOKEN1;
-const PROXY_USER1 = process.env.PROXY_USER1; // Username for proxy auth
-const PROXY_PASS1 = process.env.PROXY_PASS1; // Password for proxy auth
+// const PROXY_TOKEN1 = process.env.PROXY_TOKEN1;
+// const PROXY_USER1 = process.env.PROXY_USER1; // Username for proxy auth
+// const PROXY_PASS1 = process.env.PROXY_PASS1; // Password for proxy auth
 const sfClient = process.env.SF_CLIENT;
 const sfScrapper = process.env.SF_SCRAPPER;
 const PORT = process.env.PORT || 4000;
@@ -70,23 +70,23 @@ io.on('connection', (socket) => {
     callback({ Msg: 'successfully retrived posts notifications', data });
   });
 });
-const initializeProxies = async () => {
-  try {
-    const proxies1 = await getProxies(
-      PROXY_TOKEN1,
-      PROXY_USER1,
-      PROXY_PASS1,
-      'facebookProxies1'
-    );
-    await storeProxiesDataInRedis(proxies1, 'facebookProxies1'); // Use a suitable key for your proxies
-    console.log('Proxies initialized and stored in Redis');
-  } catch (error) {
-    console.error('Error initializing proxies:', error);
-  }
-};
+// const initializeProxies = async () => {
+//   try {
+//     const proxies1 = await getProxies(
+//       PROXY_TOKEN1,
+//       PROXY_USER1,
+//       PROXY_PASS1,
+//       'facebookProxies1'
+//     );
+//     await storeProxiesDataInRedis(proxies1, 'facebookProxies1'); // Use a suitable key for your proxies
+//     console.log('Proxies initialized and stored in Redis');
+//   } catch (error) {
+//     console.error('Error initializing proxies:', error);
+//   }
+// };
 
 runJobs();
-initializeProxies();
+// initializeProxies();
 mongoose
   .connect(dbUrl)
   .then(() => {
